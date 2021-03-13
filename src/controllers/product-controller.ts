@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { Product } from "../models/Product";
-import { uploadImage } from '../helpers/image-uploads';
+import { uploadImage } from "../helpers/image-uploads";
+import { FileArray } from "express-fileupload";
 
 interface IProduct {
     name: string;
     price: number;
     category?: string;
     description: string;
-    img: string;
+    img: FileArray | undefined;
 }
 
 export class ProductController {
@@ -16,14 +17,14 @@ export class ProductController {
             const body = req.body;
 
             let product: IProduct = {
-                name: body.productName,
-                price: body.productPrice,
-                description: body.productDescription,
-                img: body.productImage,
+                name: body.name,
+                price: body.price,
+                description: body.description,
+                img: req.files,
             };
 
-            console.log(product.img);
-            
+            console.log(product);
+
             /* const newProduct = await Product.create(product);
 
             res.json({ newProduct }); */
