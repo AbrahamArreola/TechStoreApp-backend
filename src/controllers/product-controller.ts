@@ -1,33 +1,34 @@
 import { Request, Response } from "express";
 import { Product } from "../models/Product";
 import { uploadImage } from "../helpers/image-uploads";
-import { FileArray } from "express-fileupload";
+import { UploadedFile } from "express-fileupload";
 
 interface IProduct {
     name: string;
     price: number;
     category?: string;
     description: string;
-    img: FileArray | undefined;
+    img: string;
 }
 
 export class ProductController {
     async create(req: Request, res: Response) {
         try {
             const body = req.body;
+            const files = req.files;
+
+            const imageResponse = await uploadImage(files);
 
             let product: IProduct = {
                 name: body.name,
                 price: body.price,
                 description: body.description,
-                img: req.files,
+                img: imageResponse.secure_url,
             };
 
-            console.log(product);
+            const newProduct = await Product.create(product);
 
-            /* const newProduct = await Product.create(product);
-
-            res.json({ newProduct }); */
+            res.json({ newProduct });
         } catch (error) {
             res.status(500).json({ error });
         }
