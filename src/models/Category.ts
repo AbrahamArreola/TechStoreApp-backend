@@ -1,7 +1,7 @@
 import { DataTypes, Model } from "sequelize";
 import db from "../config/database";
 
-interface ICategory extends Model{
+interface ICategory extends Model {
     id: number;
     name: string;
 }

@@ -6,6 +6,6 @@ const app = express.Router();
 
 app.post("/products/create", productController.create);
 app.get("/products", productController.getAll);
-app.get("/products/:id", productController.get);
+app.get("/product/:id", productController.get);
 
 export default app;

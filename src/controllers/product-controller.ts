@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { query, Request, Response } from "express";
 import { uploadImage } from "../helpers/image-uploads";
 import { Category, Product } from "../models/Relationships";
 
@@ -18,7 +18,8 @@ export class ProductController {
 
             const imageResponse = await uploadImage(files);
 
-            const category: string = body.category;
+            let category: string = body.category;
+            category = category.toLocaleLowerCase();
 
             const product: IProduct = {
                 name: body.name,
@@ -50,9 +51,26 @@ export class ProductController {
 
     async getAll(req: Request, res: Response) {
         try {
-            const products = await Product.findAll({
+            let queryOptions: any = {
                 order: [["id", "DESC"]],
-            });
+            };
+
+            const { categoryId, limit } = req.query;
+
+            if (categoryId) {
+                const categoryNum = +categoryId;
+                queryOptions = {
+                    ...queryOptions,
+                    where: { categoryId: categoryNum },
+                };
+            }
+
+            if (limit) {
+                const limitNum = +limit;
+                queryOptions = { ...queryOptions, limit: limitNum };
+            }
+
+            const products = await Product.findAll(queryOptions);
 
             res.json({ products });
         } catch (error) {
